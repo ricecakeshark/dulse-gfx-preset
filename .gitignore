@@ -1,0 +1,28 @@
+
+build/
+
+.dub/
+dub.selections.json
+
+*.[oa]
+*.exp
+*.obj
+*.pdb
+
+*.exe
+*.so
+*.so.*
+*.dylib
+*.dll
+*.lib
+
+# VSCode
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# OS
+desktop.ini
+.DS_Store
+Thumbs.db

@@ -1,0 +1,13 @@
+name "dulse-preset"
+description "graphics resource preset"
+authors "RiceShark"
+copyright "Copyright © 2026, RiceShark"
+license "MPL-2.0"
+
+dependency "dulse-gfx" version=">=0.1.0"
+
+targetName "dulse_preset"
+targetPath "build"
+targetType "sourceLibrary"
+
+copyFiles "shader/"
