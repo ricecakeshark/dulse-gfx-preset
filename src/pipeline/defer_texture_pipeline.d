@@ -1,5 +1,6 @@
 module dulse_preset.pipeline.defer_texture_pipeline;
 
+import dulse_preset.texture;
 import dulse_sdl;
 import dulse_gfx;
 
@@ -47,15 +48,18 @@ GraphicsContext create_pipeline_defer_texture(
 		target_info = GraphicsPipelineTargetInfo(
 			[
 			GpuColorTargetDescription(
-				GpuTextureFormat.r8g8b8a8_unorm
-			), GpuColorTargetDescription(
-				GpuTextureFormat.r16g16b16a16_float
-			), GpuColorTargetDescription(
-				GpuTextureFormat.r16g16b16a16_float
-			), GpuColorTargetDescription(
-				GpuTextureFormat.r32g32_int
+				graphics_context.preset.albedo.format,
 			),
-		], GpuTextureFormat.d32_float,
+			GpuColorTargetDescription(
+				graphics_context.preset.normal.format,
+			),
+			GpuColorTargetDescription(
+				graphics_context.preset.material.format,
+			),
+			GpuColorTargetDescription(
+				graphics_context.preset.entity.format,
+			),
+		], graphics_context.preset.depth.format,
 		);
 	}
 	defer_pipeline
