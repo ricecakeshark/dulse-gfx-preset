@@ -9,5 +9,6 @@ dependency "dulse-gfx" version="~>0.2"
 targetName "dulse_preset"
 targetPath "build"
 targetType "sourceLibrary"
+importPaths "src"
 
 copyFiles "shader/"
