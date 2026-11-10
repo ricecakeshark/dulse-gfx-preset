@@ -9,10 +9,10 @@ layout(set = 0, binding = 1) uniform sampler2D input_texture;
 layout(set = 1, binding = 0, rgba16f) uniform writeonly image2D output_image;
 
 // Uniform
-layout(std430, set = 2, binding = 0) uniform Color
+layout(std430, set = 2, binding = 0) uniform Config
 {
-	float fog_start;
-	float fog_end;
+	float depth_start;
+	float depth_end;
 	vec4 fog_color;
 } config;
 
@@ -40,7 +40,7 @@ void main()
 	const float depth = texelFetch(depth_texture, screen_pos, 0)[0];
 
 	const vec3 world_pos = reconstruct_world_pos(screen_pos, depth);
-	const float fog_factor = smoothstep(config.fog_start, config.fog_end, length(world_pos - view.vec_pos));
+	const float fog_factor = smoothstep(config.depth_start, config.depth_end, length(world_pos - view.vec_pos));
 
 	imageStore(output_image, screen_pos, mix(input_color, config.fog_color, fog_factor));
 	return;
