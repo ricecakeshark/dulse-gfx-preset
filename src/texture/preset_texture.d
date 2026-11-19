@@ -54,6 +54,11 @@ struct TexturePreset
 		return this._edge.apply(gc);
 	}
 
+	GpuTextureCreateInfo alt()
+	{
+		return this._alt.apply(gc);
+	}
+
 	enum _depth = GpuTextureCreateInfo(
 			GpuTextureType._2d, GpuTextureFormat.d32_float,
 			GpuTextureUsageFlags.depth_stencil_target | GpuTextureUsageFlags.sampler,
@@ -88,6 +93,11 @@ struct TexturePreset
 	enum _edge = GpuTextureCreateInfo(
 			GpuTextureType._2d, GpuTextureFormat.r8g8b8a8_unorm,
 			GpuTextureUsageFlags.sampler | GpuTextureUsageFlags.compute_storage_write,
+			0, 0, 1, 1,
+		);
+	enum _alt = GpuTextureCreateInfo(
+			GpuTextureType._2d, GpuTextureFormat.r16g16b16a16_float,
+			GpuTextureUsageFlags.sampler | GpuTextureUsageFlags.compute_storage_write | GpuTextureUsageFlags.color_target,
 			0, 0, 1, 1,
 		);
 }
