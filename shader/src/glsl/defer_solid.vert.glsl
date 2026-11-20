@@ -31,7 +31,7 @@ void main()
 	// normal
 	out_normal = normalize(in_normal * mat3(model.matrix_normal));
 	// position
-	vec4 world_pos = vec4(in_pos, 1.0f) * model.matrix_model;
+	const vec4 world_pos = vec4(in_pos, 1.0f) * model.matrix_model;
 	out_pos = world_pos.xyz;
 	gl_Position = vec4(in_pos, 1.0f) * model.matrix_model * view.mat_view_proj;
 	return;

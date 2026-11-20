@@ -17,7 +17,7 @@ struct LightPoint
 	vec4 color;
 	float intensity;
 };
-
+// Scene
 layout(std430, set = 2, binding = 0) uniform Scene
 {
 	vec4 light_ambient;
@@ -42,37 +42,37 @@ vec3 reconstruct_world_pos(const in vec2 uv, const in float depth);
 
 void main()
 {
-	ivec2 screen_pos = ivec2(gl_GlobalInvocationID.xy);
-	ivec2 image_size = imageSize(color_texture);
+	const ivec2 screen_pos = ivec2(gl_GlobalInvocationID.xy);
+	const ivec2 image_size = imageSize(color_texture);
 	if(screen_pos.x >= image_size.x || screen_pos.y >= image_size.y)
 	{
 		return;
 	}
 	vec2 uv = vec2((vec2(screen_pos) + 0.5) / vec2(image_size));
 	// prepare
-	vec4 albedo_color = texelFetch(albedo_texture, screen_pos, 0);
-	vec3 normal_world = normalize(texture(normal_texture, uv).rgb);
+	const vec4 albedo_color = texelFetch(albedo_texture, screen_pos, 0);
+	const vec3 normal_world = normalize(texture(normal_texture, uv).rgb);
 	//vec3 world_pos = normalize(texelFetch(pos_texture, screen_pos, 0).rgb);
-	vec3 world_pos = reconstruct_world_pos(uv, texelFetch(depth_texture, screen_pos, 0).r);
+	const vec3 world_pos = reconstruct_world_pos(uv, texelFetch(depth_texture, screen_pos, 0).r);
 	// render
-	vec3 vec_light = normalize(light.light_point_list[0].pos.xyz - world_pos);
-	vec3 vec_view = normalize(view.vec_pos - world_pos);
-	vec3 vec_reflect = reflect(-vec_light, normal_world);
+	const vec3 vec_light = normalize(light.light_point_list[0].pos.xyz - world_pos);
+	const vec3 vec_view = normalize(view.vec_pos - world_pos);
+	const vec3 vec_reflect = reflect(-vec_light, normal_world);
 
 	// ambient
-	vec3 ambient = scene.light_ambient.rgb * scene.light_ambient.a;
+	const vec3 ambient = scene.light_ambient.rgb * scene.light_ambient.a;
 	// diffuse
-	float diff = max(dot(normal_world, vec_light), 0.0);
-	vec3 diffuse = light.light_point_list[0].color.xyz * light.light_point_list[0].intensity * diff;
+	const float diff = max(dot(normal_world, vec_light), 0.0);
+	const vec3 diffuse = light.light_point_list[0].color.xyz * light.light_point_list[0].intensity * diff;
 	// specular
-	float specular_strength = texelFetch(material_texture, screen_pos, 0).x;
-	float shininess = texelFetch(material_texture, screen_pos, 0).y;
+	const float specular_strength = texelFetch(material_texture, screen_pos, 0).x;
+	const float shininess = texelFetch(material_texture, screen_pos, 0).y;
 	float spec = 0.0;
 	if(diff > 0.0)
 	{
 		spec = pow(max(dot(vec_view, vec_reflect), 0.0), shininess);
 	}
-	vec3 specular = light.light_point_list[0].color.xyz * light.light_point_list[0].intensity * specular_strength * spec;
+	const vec3 specular = light.light_point_list[0].color.xyz * light.light_point_list[0].intensity * specular_strength * spec;
 
 	imageStore(color_texture, screen_pos, vec4((diffuse + ambient) * albedo_color.rgb + specular, albedo_color.a));
 	return;
@@ -80,8 +80,7 @@ void main()
 
 vec3 reconstruct_world_pos(const in vec2 uv, const in float depth)
 {
-	vec4 clip_pos;
-	clip_pos = vec4(
+	const vec4 clip_pos = vec4(
 		uv.x * 2.0 - 1.0,
 		uv.y * 2.0 - 1.0,
 		depth,

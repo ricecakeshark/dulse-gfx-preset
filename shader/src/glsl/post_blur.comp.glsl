@@ -27,8 +27,8 @@ bool is_in_texture(const in ivec2 pos);
 
 void main()
 {
-	ivec2 image_size = imageSize(render_image);
-	ivec2 screen_pos = ivec2(gl_GlobalInvocationID.xy);
+	const ivec2 image_size = imageSize(render_image);
+	const ivec2 screen_pos = ivec2(gl_GlobalInvocationID.xy);
 	if(screen_pos.x >= image_size.x || screen_pos.y >= image_size.y)
 	{
 		return;

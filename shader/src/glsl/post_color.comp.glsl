@@ -46,8 +46,8 @@ float max3_user(const in vec3);
 
 void main()
 {
-	ivec2 screen_pos = ivec2(gl_GlobalInvocationID.xy);
-	vec4 texel_color = texelFetch(source_texture, screen_pos, 0);
+	const ivec2 screen_pos = ivec2(gl_GlobalInvocationID.xy);
+	const vec4 texel_color = texelFetch(source_texture, screen_pos, 0);
 	vec4 output_color;
 
 	output_color = vec4(
@@ -105,8 +105,8 @@ vec3 tonemap_weight(const in vec3 color, const in float weight)
 
 vec3 tonemap_3zone(const in vec3 color)
 {
-	float maximum = max3_user(color);
-	float mapped_elem = tonemap_3zone_scalar(maximum);
+	const float maximum = max3_user(color);
+	const float mapped_elem = tonemap_3zone_scalar(maximum);
 	if(maximum <= epsilon)
 	{
 		return vec3(mapped_elem);

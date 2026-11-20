@@ -17,14 +17,14 @@ layout(std430, set = 2, binding = 0) uniform Color
 
 void main()
 {
-	vec2 image_size = imageSize(render_image);
-	ivec2 screen_pos = ivec2(gl_GlobalInvocationID.xy);
+	const vec2 image_size = imageSize(render_image);
+	const ivec2 screen_pos = ivec2(gl_GlobalInvocationID.xy);
 	if(screen_pos.x >= image_size.x || screen_pos.y >= image_size.y)
 	{
 		return;
 	}
 	// read texture (g-buffer)
-	vec4 edge_color = texelFetch(edge_texture, screen_pos, 0);
+	const vec4 edge_color = texelFetch(edge_texture, screen_pos, 0);
 	
 	vec4 draw_color = vec4(0.0, 0.0, 0.0, 0.0);
 	

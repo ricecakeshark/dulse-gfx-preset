@@ -40,10 +40,10 @@ layout(std430, set = 3, binding = 1) uniform Model
 void main()
 {
 	// out_albedo
-	vec4 texel_color = texture(user_texture, in_uv);
+	const vec4 texel_color = texture(user_texture, in_uv);
 	out_albedo = texel_color;
 	// out_normal
-	vec3 normal_world = normalize(in_normal);
+	const vec3 normal_world = normalize(in_normal);
 	out_normal = vec4(normal_world, 0.0);
 	// out_material
 	out_material = vec4(model.specular_strength, model.shininess, 0.0, 0.0);
