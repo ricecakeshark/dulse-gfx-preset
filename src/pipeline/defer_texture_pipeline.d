@@ -14,11 +14,11 @@ GraphicsContext create_pipeline_defer_texture(
 	graphics_context.create(defer_pipeline, vertex_shader, fragment_shader);
 	vertex_shader.create(
 		ShaderFile("defer_texture.vert", graphics_context.get_shader_format()),
-		GpuShaderArguments(0, 3, 0, 0),
+		GpuShaderArguments(0, 2, 0, 0),
 	);
 	fragment_shader.create(
 		ShaderFile("defer_texture.frag", graphics_context.get_shader_format()),
-		GpuShaderArguments(1, 4, 0, 0),
+		GpuShaderArguments(1, 2, 0, 0),
 	);
 	// Defer Pipeline
 	scope GraphicsPipelineCreateInfo defer_pipeline_info;

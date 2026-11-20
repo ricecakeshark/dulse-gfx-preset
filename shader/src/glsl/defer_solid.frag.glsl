@@ -19,38 +19,21 @@ struct LightPoint
 	vec3 color;
 	float intensity;
 };
-// Scene (storage buffer)
-layout(set = 2, binding = 1) readonly buffer Scene
-{
-	LightPoint[4] light_point;
-	uint count_light_point;
-} scene_ssbo;
 
-// uniform buffer
-layout(std430, set = 3, binding = 0) uniform Scene
-{
-	vec4 light_ambient; // no use
-} scene;
 // View
-layout(std430, set = 3, binding = 1) uniform View
+layout(std430, set = 3, binding = 0) uniform View
 {
 	layout(row_major) mat4 mat_view_proj;
 	layout(row_major) mat4 mat_inv_view_proj;
 	vec3 vec_pos;
 } view;
 // Model
-layout(std430, set = 3, binding = 2) uniform Model
+layout(std430, set = 3, binding = 1) uniform Model
 {
 	float specular_strength;
 	float shininess;
 	int entity_id;
 } model;
-// Light
-layout(std430, set = 3, binding = 3) uniform Light
-{
-	LightPoint[1] light_point_list;
-	uint count_light_point;
-} light;
 
 void main()
 {
