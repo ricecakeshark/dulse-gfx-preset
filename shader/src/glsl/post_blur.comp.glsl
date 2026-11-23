@@ -9,7 +9,7 @@ layout(set = 0, binding = 1) uniform sampler2D input_texture;
 layout(set = 1, binding = 0, rgba16f) uniform writeonly image2D render_image;
 
 // Uniform
-layout(std430, set = 2, binding = 0) uniform Color
+layout(std430, set = 2, binding = 0) uniform BlurConfig
 {
 	float blur_start;
 	float blur_end;

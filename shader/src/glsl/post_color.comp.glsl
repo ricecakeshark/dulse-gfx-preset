@@ -124,7 +124,7 @@ float tonemap_3zone_scalar(const in float color_elem)
 	if (color_elem < config_tone.mid_low)
 	{
 		// compress into peak_low and mid_low
-		float t = clamp(
+		const float t = clamp(
 			(color_elem - config_tone.peak_low) / max(config_tone.mid_low - config_tone.peak_low, epsilon),
 			0.0, 1.0
 		);
@@ -134,8 +134,8 @@ float tonemap_3zone_scalar(const in float color_elem)
 	{
 		// compress into mid_high and peak_high
 		//color_elem = color_elem * rcp(color_elem + config_tone.peak_high);
-		float range = max(config_tone.peak_high - config_tone.mid_high, epsilon);
-		float over = color_elem - config_tone.mid_high;
+		const float range = max(config_tone.peak_high - config_tone.mid_high, epsilon);
+		const float over = color_elem - config_tone.mid_high;
 		return config_tone.mid_high + range * (1.0 - exp(-over / range));
 	}
 	// do nothing;

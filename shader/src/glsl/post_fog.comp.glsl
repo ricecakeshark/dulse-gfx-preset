@@ -2,19 +2,18 @@
 #extension GL_EXT_scalar_block_layout : enable
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
-
+// read
 layout(set = 0, binding = 0) uniform sampler2D depth_texture;
 layout(set = 0, binding = 1) uniform sampler2D input_texture;
-
+// read-write 
 layout(set = 1, binding = 0, rgba16f) uniform writeonly image2D output_image;
-
 // Uniform
-layout(std430, set = 2, binding = 0) uniform Config
+layout(std430, set = 2, binding = 0) uniform FogConfig
 {
-	float depth_start;
-	float depth_end;
-	vec4 fog_color;
-} config;
+	float start;
+	float end;
+	vec4 color;
+} fog_config;
 
 layout(std430, set = 2, binding = 1) uniform View
 {
@@ -40,9 +39,9 @@ void main()
 	const float depth = texelFetch(depth_texture, screen_pos, 0)[0];
 
 	const vec3 world_pos = reconstruct_world_pos(screen_pos, depth);
-	const float fog_factor = smoothstep(config.depth_start, config.depth_end, length(world_pos - view.vec_pos));
+	const float fog_factor = smoothstep(fog_config.start, fog_config.end, length(world_pos - view.vec_pos));
 
-	imageStore(output_image, screen_pos, mix(input_color, config.fog_color, fog_factor));
+	imageStore(output_image, screen_pos, mix(input_color, fog_config.color, fog_factor));
 	return;
 }
 

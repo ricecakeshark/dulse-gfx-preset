@@ -28,8 +28,8 @@ void main()
 	
 	const vec4 draw_color = vec4(
 		is_edge_entity(screen_pos) ? 1.0 : 0.0, 
-		is_edge_normal(strength_normal(screen_pos)) ? 1.0 : 0.0, 
-		is_edge_depth(slope_depth(screen_pos)) ? 1.0 : 0.0, 
+		strength_normal(screen_pos), 
+		slope_depth(screen_pos),
 		1.0
 	);
 	imageStore(edge_image, screen_pos, draw_color);
@@ -68,12 +68,11 @@ float strength_normal(const in ivec2 screen_pos)
 		ivec2(+1, 0)
 	);
 	const vec3 center_normal = texelFetch(normal_texture, screen_pos, 0).xyz;
-	float total_diff = 0.0;
 	if(!is_valid_normal(center_normal))
 	{
 		return 0.0;
 	}
-
+	float strength = 0.0;
 	for(int count = 0; count < 4; ++count)
 	{
 		if(!is_in_texture(screen_pos + offsets[count]))
@@ -85,9 +84,9 @@ float strength_normal(const in ivec2 screen_pos)
 		{
 			continue;
 		}
-		total_diff += (1.0 - dot(center_normal, other_normal));
+		strength = max(strength, 1.0 - dot(center_normal, other_normal));
 	}
-	return total_diff;
+	return strength;
 }
 
 bool is_edge_normal(const in float total_diff)
@@ -108,18 +107,17 @@ float slope_depth(const in ivec2 screen_pos)
 		ivec2(0,+1),
 		ivec2(+1,0)
 	);
-	float slope = 0.0;
 	const float center_depth = texelFetch(depth_texture, screen_pos, 0)[0];
-
+	float slope = 0.0;
 	for(int count = 0; count < 4; ++ count)
 	{
-		ivec2 offset_pos = screen_pos + offset[count];
+		const ivec2 offset_pos = screen_pos + offset[count];
 		if(!is_in_texture(offset_pos))
 		{
 			continue;
 		}
-		slope += texelFetch(depth_texture, offset_pos, 0)[0] - center_depth;
-	}
+		slope = max(slope, abs(texelFetch(depth_texture, offset_pos, 0)[0] - center_depth));
+	};
 	return slope;
 }
 

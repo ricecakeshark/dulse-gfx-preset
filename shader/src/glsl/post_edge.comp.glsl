@@ -2,18 +2,24 @@
 #extension GL_EXT_scalar_block_layout : enable
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
-
+// read
 layout(set = 0, binding = 0) uniform sampler2D edge_texture;
-
+// write
 layout(set = 1, binding = 0, rgba16f) uniform writeonly image2D render_image;
-
-// View
-layout(std430, set = 2, binding = 0) uniform Color
+// UBO
+layout(std430, set = 2, binding = 0) uniform EdgeThreshold
 {
-	vec4 outline_entity;
-	vec4 outline_normal;
-	vec4 outline_depth;
-} color;
+	float entity;
+	float normal;
+	float depth;
+} edge_threshold;
+
+layout(std430, set = 2, binding = 1) uniform EdgeColor
+{
+	vec4 entity;
+	vec4 normal;
+	vec4 depth;
+} edge_color;
 
 void main()
 {
@@ -23,22 +29,22 @@ void main()
 	{
 		return;
 	}
-	// read texture (g-buffer)
-	const vec4 edge_color = texelFetch(edge_texture, screen_pos, 0);
+	// read edge evaluation from texture (g-buffer)
+	const vec4 edge_eval = texelFetch(edge_texture, screen_pos, 0);
 	
 	vec4 draw_color = vec4(0.0, 0.0, 0.0, 0.0);
 	
-	if(color.outline_entity.a > 0.01 && edge_color.r > 0.0)
+	if(edge_color.entity.a > 0.01 && edge_eval.r > edge_threshold.entity)
 	{
-		draw_color = color.outline_depth;
+		draw_color = edge_color.entity;
 	}
-	else if(color.outline_normal.a > 0.01 && edge_color.g > radians(30.0))
+	else if(edge_color.normal.a > 0.01 && edge_eval.g > edge_threshold.normal)
 	{
-		draw_color = color.outline_normal;
+		draw_color = edge_color.normal;
 	}
-	else if(color.outline_depth.a > 0.01 && abs(edge_color.b) > 0.01)
+	else if(edge_color.depth.a > 0.01 && edge_eval.b > edge_threshold.depth)
 	{
-		draw_color = color.outline_entity;
+		draw_color = edge_color.depth;
 	}
 
 	if(draw_color != vec4(0.0, 0.0, 0.0, 0.0))
