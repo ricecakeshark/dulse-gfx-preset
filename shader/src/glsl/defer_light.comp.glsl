@@ -37,6 +37,7 @@ layout(std430, set = 2, binding = 1) uniform View
 } view;
 
 vec3 reconstruct_world_pos(const in vec2 uv, const in float depth);
+float calc_attenuation(const in float d);
 
 void main()
 {
@@ -52,8 +53,9 @@ void main()
 	const vec3 normal_world = normalize(texture(normal_texture, uv).rgb);
 	const vec3 world_pos = reconstruct_world_pos(uv, texelFetch(depth_texture, screen_pos, 0).r);
 	const vec3 vec_view = normalize(view.vec_pos - world_pos);
-	const float specular_strength = texelFetch(material_texture, screen_pos, 0).x;
-	const float shininess = texelFetch(material_texture, screen_pos, 0).y;
+	const vec2 material_info = texelFetch(material_texture, screen_pos, 0).xy;
+	const float specular_strength = material_info.x;
+	const float shininess = material_info.y;
 
 	// ambient light
 	const vec3 ambient = scene.light_ambient.rgb * scene.light_ambient.a;
@@ -67,17 +69,23 @@ void main()
 		const vec3 vec_light = light.list[count].pos.xyz - world_pos;
 		const vec3 dir_light = normalize(vec_light);
 		const float dist_light = length(vec_light);
-		const float attenuation = 1.0 / (1.0 + 0.09 * dist_light);
+		const float attenuation = calc_attenuation(dist_light);
 		
 		// diffuse light
 		const float diff = max(dot(normal_world, dir_light), 0.0);
-		diffuse += light.list[count].color.xyz * light.list[count].color.a * diff * attenuation;
+		diffuse += light.list[count].color.xyz * light.list[count].color.a
+			 * diff * attenuation;
 
 		if(diff > 0.0)
 		{
 			// specular light
-			const vec3 vec_reflect = reflect(-dir_light, normal_world);
-			const float spec = pow(max(dot(vec_view, vec_reflect), 0.0), shininess);
+			// 1. phong
+			//const vec3 vec_reflect = reflect(-dir_light, normal_world);
+			//const float spec = pow(max(dot(vec_view, vec_reflect), 0.0), shininess);
+			// 2. blin-phong
+			const vec3 harf_vec = normalize(dir_light + vec_view);
+			const float spec = pow(clamp(dot(normal_world, harf_vec), 0.0, 1.0), shininess);
+			// sum of specular
 			specular += light.list[count].color.xyz
 			* light.list[count].color.a * specular_strength * spec * attenuation;
 		}
@@ -99,4 +107,9 @@ vec3 reconstruct_world_pos(const in vec2 uv, const in float depth)
 	vec4 world_pos = clip_pos * view.mat_inv_view_proj;
 	world_pos.xyz /= world_pos.w;
 	return world_pos.xyz;
+}
+
+float calc_attenuation(const in float d)
+{
+	return 1.0 / (1.0 + 0.09 * d + 0.032 * pow(d, 2.0));
 }
